@@ -1,2 +1,1 @@
 
-TwitMaker = Npm.require('twit');
