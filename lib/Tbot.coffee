@@ -17,7 +17,7 @@ class Tbot
       if err
         console.error err
       else
-        if opts.debug
+        if opts?.debug
           @log url, data
 
   post: (url, params, opts) ->
@@ -27,7 +27,7 @@ class Tbot
         console.error url, params
         console.error err
       else
-        if opts.debug
+        if opts?.debug
           @log url, data
 
   log: (url, data, response) ->
@@ -78,32 +78,27 @@ class Tbot
     sleep.usleep(s)
     console.log('awake')
 
+  status: (msg) ->
+    console.log("post:", msg)
+    @post 'statuses/update', {status: msg}
 
   replyTo: (tweet, msg) ->
     fullMsg = "@#{tweet.user.screen_name} #{msg}"
-    opts = {
-      status: fullMsg
-      in_reply_to_status_id: tweet.id_str
-    }
-    console.log("replyTo\n", opts)
-    @post 'statuses/update', opts
+    @status(fullMsg)
+
+    # opts = {
+    #   status: fullMsg
+    #   in_reply_to_status_id: tweet.id_str
+    # }
+    # console.log("replyTo\n", opts)
+    # @post 'statuses/update', opts
 
   favorite: (tweet) ->
     @post 'favorites/create', {id: tweet.id_str}
 
-  tweetAt: (screen_name, status) ->
-    status ?= "Did you play at ComicEnglish.com today?"
-    screen_name ?= "noahcomice"
-    fullMsg = "@#{screen_name} #{status}"
-    console.log("tweetAt", fullMsg)
-    @twit.post 'statuses/update', {
-      status: fullMsg
-    }, (err, data, response) =>
-      if err
-        console.error(err)
-      else
-        console.log("tweetAt", fullMsg, {debug: true})
-      # console.log(data, response)
+  tweetAt: (screen_name, msg) ->
+    fullMsg = "@#{screen_name} #{msg}"
+    @status(fullMsg)
 
   followers: () ->
     @twit.get 'followers/list', {
